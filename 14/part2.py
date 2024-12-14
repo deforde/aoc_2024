@@ -2,6 +2,7 @@
 
 import sys
 from pprint import pprint
+from statistics import variance
 
 
 def print_robots(robots, nx, ny):
@@ -42,7 +43,10 @@ def main():
 
         robots.append((px, py, vx, vy))
 
-    for n in range(100):
+    avg_xvar = 0
+    avg_yvar = 0
+    n = 0
+    while True:
         for i, robot in enumerate(robots):
             px, py, vx, vy = robot
             px += vx
@@ -54,28 +58,17 @@ def main():
             px %= nx
             py %= ny
             robots[i] = (px, py, vx, vy)
-
-    # print_robots(robots, nx, ny)
-
-    counts = [0, 0, 0, 0]
-    for px, py, _, _ in robots:
-        if px < nx // 2:
-            if py < ny // 2:
-                counts[0] += 1
-            elif py > ny // 2:
-                counts[1] += 1
-        elif px > nx // 2:
-            if py < ny // 2:
-                counts[2] += 1
-            elif py > ny // 2:
-                counts[3] += 1
-
-    ans = 1
-    for count in counts:
-        ans *= count
-
-    print(ans)
+        n += 1
+        xvar = variance(robot[0] for robot in robots)
+        yvar = variance(robot[1] for robot in robots)
+        if xvar <= 0.75 * avg_xvar and yvar <= 0.75 * avg_yvar:
+            # print_robots(robots, nx, ny)
+            break
+        avg_xvar += (xvar - avg_xvar) / n
+        avg_yvar += (yvar - avg_yvar) / n
+    print(n)
 
 
 if __name__ == "__main__":
     main()
+
