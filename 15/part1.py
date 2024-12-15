@@ -1,7 +1,6 @@
 #!python
 
 import sys
-from pprint import pprint
 
 
 def do_move(p, move):
